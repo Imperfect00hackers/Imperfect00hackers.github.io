@@ -7,9 +7,9 @@
     <meta name="keywords" content="sql注入笔记, Batman">
     <meta name="description" content="
 常见函数
-concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
+concat() 格式：concat(id,’,’,name) 分隔符在中间位置，如果只给一个参数，它只会输出一个参数的值
 
-concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只">
+concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，如果只">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -435,16 +435,16 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
             <div id="articleContent">
                 <p><img src="/image/1.jpg" alt="sql注入"></p>
 <h2 id="常见函数"><a href="#常见函数" class="headerlink" title="常见函数"></a>常见函数</h2><ul>
-<li><p>concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值</p>
+<li><p>concat() 格式：concat(id,’,’,name) 分隔符在中间位置，如果只给一个参数，它只会输出一个参数的值</p>
 </li>
-<li><p>concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只给一个参数回报错</p>
+<li><p>concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，如果只给一个参数会报错</p>
 </li>
-<li><p>group_concat() 格式：group_concat(id,0x2b,name) 多个参数时 不加分隔符默认是连接在一起的 单个参数时会给出参数所有的值</p>
+<li><p>group_concat() 格式：group_concat(id,0x2b,name) 多个参数时，不加分隔符默认是连接在一起的，单个参数时会给出参数所有的值</p>
 </li>
 <li><p>union select 1,concat(schema_name),3 from information_schema.schemata 列出排位为第一个的数据库</p>
 </li>
 <li><p>union select 1,group_concat(schema_name),3 from information_schema.schemata 列出所有数据库</p>
-<p>如果不16进制就需要双引号包裹 但如果有addlashes函数就会把引号转义导致失效，16进制无论是字符型还是数字型都通用 就避免了失效这个问题</p>
+<p>如果不16进制就需要双引号包裹，但如果有addlashes函数就会把引号转义导致失效，16进制无论是字符型还是数字型都通用，就避免了失效这个问题</p>
 </li>
 </ul>
 <h2 id="盲注"><a href="#盲注" class="headerlink" title="盲注"></a>盲注</h2><ul>
@@ -553,12 +553,11 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
-            </div>
+                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2019/10/11/rust/">
+                <a href="/2019/10/11/sql/">
                     <div class="card-image">
                         
                         
@@ -578,9 +577,9 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-11
-                            </span>
+                        <span class="publish-date">
+                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-11
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fa fa-user fa-fw"></i>
@@ -589,7 +588,6 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
@@ -614,9 +612,9 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如�
                         
                             
 常见函数
-concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
+concat() 格式：concat(id,’,’,name) 分隔符在中间位置，如果只给一个参数，它只会输出一个参数的值
 
-concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只
+concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，如果只
                         
                     </div>
                     <div class="publish-info">
