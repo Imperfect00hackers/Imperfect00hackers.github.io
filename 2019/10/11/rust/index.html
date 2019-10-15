@@ -135,7 +135,7 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，�
         <div class="logo-name">Batman</div>
         <div class="logo-desc">
             
-            Never really desperate, only the lost of the soul.
+            test
             
         </div>
     </div>
@@ -439,7 +439,7 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，�
 </li>
 <li><p>concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，如果只给一个参数会报错</p>
 </li>
-<li><p>group_concat() 格式：group_concat(id,0x2b,name) 多个参数时，不加分隔符默认是连接在一起的，单个参数时会给出参数所有的值</p>
+<li><p>group_concat() 格式：group_concat(id,0x2b,name) 多个参数时，不加分隔符默认是连接在一起的，单个参数时会给出参数所有的值，但是有大小限制最大1024字节</p>
 </li>
 <li><p>union select 1,concat(schema_name),3 from information_schema.schemata 列出排位为第一个的数据库</p>
 </li>
@@ -553,49 +553,9 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，�
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fa fa-chevron-left"></i>&nbsp;上一篇</div>
-            <div class="card">
-                <a href="/2019/10/11/sql/">
-                    <div class="card-image">
-                        
-                        
-                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="sql注入笔记">
-                        
-                        <span class="card-title">sql注入笔记</span>
-                    </div>
-                </a>
-                <div class="card-content article-content">
-                    <div class="summary block-with-text">
-                        
-                            
-常见函数
-concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
-
-concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只
-                        
-                    </div>
-                    <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-11
-                        </span>
-                        <span class="publish-author">
-                            
-                            <i class="fa fa-user fa-fw"></i>
-                            Batman
-                            
-                        </span>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        
-        <div class="article col s12 m6" data-aos="fade-up">
-            <div class="article-badge right-badge text-color">
-                本篇&nbsp;<i class="fa fa-dot-circle-o"></i>
+                <i class="fa fa-dot-circle-o"></i>&nbsp;本篇
             </div>
             <div class="card">
                 <a href="/2019/10/11/rust/">
@@ -634,10 +594,88 @@ concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数，�
             </div>
         </div>
         
+        
+        <div class="article col s12 m6" data-aos="fade-up">
+            <div class="article-badge right-badge text-color">
+                下一篇&nbsp;<i class="fa fa-chevron-right"></i>
+            </div>
+            <div class="card">
+                <a href="/2019/10/11/sql/">
+                    <div class="card-image">
+                        
+                        
+                        <img src="/medias/featureimages/17.jpg" class="responsive-img" alt="sql注入笔记">
+                        
+                        <span class="card-title">sql注入笔记</span>
+                    </div>
+                </a>
+                <div class="card-content article-content">
+                    <div class="summary block-with-text">
+                        
+                            
+常见函数
+concat() 格式：concat(id,’,’,name) 分隔符在中间位置 如果只给一个参数 它只会输出一个参数的值
+
+concat_ws() 格式：concat_ws(‘_’,id,name) 分割符在第一个参数 如果只
+                        
+                    </div>
+                    <div class="publish-info">
+                            <span class="publish-date">
+                                <i class="fa fa-clock-o fa-fw icon-date"></i>2019-10-11
+                            </span>
+                        <span class="publish-author">
+                            
+                            <i class="fa fa-user fa-fw"></i>
+                            Batman
+                            
+                        </span>
+                    </div>
+                </div>
+                
+            </div>
+        </div>
+        
     </div>
 </article>
 </div>
 
+
+<script>
+    $('#articleContent').on('copy', function (e) {
+        // IE8 or earlier browser is 'undefined'
+        if (typeof window.getSelection === 'undefined') return;
+
+        var selection = window.getSelection();
+        // if the selection is short let's not annoy our users.
+        if (('' + selection).length < Number.parseInt('120')) {
+            return;
+        }
+
+        // create a div outside of the visible area and fill it with the selected text.
+        var bodyElement = document.getElementsByTagName('body')[0];
+        var newdiv = document.createElement('div');
+        newdiv.style.position = 'absolute';
+        newdiv.style.left = '-99999px';
+        bodyElement.appendChild(newdiv);
+        newdiv.appendChild(selection.getRangeAt(0).cloneContents());
+
+        // we need a <pre> tag workaround.
+        // otherwise the text inside "pre" loses all the line breaks!
+        if (selection.getRangeAt(0).commonAncestorContainer.nodeName === 'PRE') {
+            newdiv.innerHTML = "<pre>" + newdiv.innerHTML + "</pre>";
+        }
+
+        var url = document.location.href;
+        newdiv.innerHTML += '<br />'
+            + '来源: Batman<br />'
+            + '作者: Batman<br />'
+            + '链接: <a href="' + url + '">' + url + '</a><br />'
+            + '本文章著作权归作者所有，任何形式的转载都请注明出处。';
+
+        selection.selectAllChildren(newdiv);
+        window.setTimeout(function () {bodyElement.removeChild(newdiv);}, 200);
+    });
+</script>
 
 
     </div>
